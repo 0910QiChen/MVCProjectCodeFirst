@@ -10,12 +10,12 @@ namespace MVCProjectCodeFirst.Controllers
 {
     public class UserController : Controller
     {
-        private UserContext db = new UserContext();
+        private readonly UserContext db = new UserContext();
 
         // GET: User
         public ActionResult Index()
         {
-            return View(db.Users.ToList());
+            return View(db.UserSet.ToList());
         }
 
         // GET: User/Details/5
@@ -25,7 +25,7 @@ namespace MVCProjectCodeFirst.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            User user = db.Users.Find(id);
+            Users user = db.UserSet.Find(id);
             if (user == null)
             {
                 return HttpNotFound();
@@ -44,13 +44,13 @@ namespace MVCProjectCodeFirst.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "userID,username,email,password,confirmedPassword,picturePath")] User user)
+        public ActionResult Create([Bind(Include = "userID,username,email,hashedPassword,confirmedPassword,picturePath")] Users user)
         {
             if (ModelState.IsValid)
             {
-                user.password = PasswordSecurity.HashPassword(user.password);
+                user.hashedPassword = PasswordSecurity.HashPassword(user.hashedPassword);
                 user.confirmedPassword = PasswordSecurity.HashPassword(user.confirmedPassword);
-                db.Users.Add(user);
+                db.UserSet.Add(user);
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
@@ -65,7 +65,7 @@ namespace MVCProjectCodeFirst.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            User user = db.Users.Find(id);
+            Users user = db.UserSet.Find(id);
             if (user == null)
             {
                 return HttpNotFound();
@@ -78,7 +78,7 @@ namespace MVCProjectCodeFirst.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "userID,username,email,password,confirmedPassword,picturePath")] User user)
+        public ActionResult Edit([Bind(Include = "userID,username,email,password,confirmedPassword,picturePath")] Users user)
         {
             if (ModelState.IsValid)
             {
@@ -96,7 +96,7 @@ namespace MVCProjectCodeFirst.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            User user = db.Users.Find(id);
+            Users user = db.UserSet.Find(id);
             if (user == null)
             {
                 return HttpNotFound();
@@ -109,8 +109,8 @@ namespace MVCProjectCodeFirst.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            User user = db.Users.Find(id);
-            db.Users.Remove(user);
+            Users user = db.UserSet.Find(id);
+            db.UserSet.Remove(user);
             db.SaveChanges();
             return RedirectToAction("Index");
         }
